@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <title>北海道本格ジンギスカン ひつじや｜注文管理</title>
+
+  <style>
+    :root{
+      --bg:#131110;
+      --bg2:#0c0b0a;
+      --card:#2b2420;
+      --card2:#332b26;
+      --line:rgba(255,244,230,.14);
+      --text:#fff9f2;
+      --muted:rgba(255,241,224,.70);
+      --gold:#dfb96e;
+      --danger:#a72922;
+      --danger2:#7b1612;
+      --ok:#3e7a4c;
+      --ok2:#2f5f39;
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{
+      max-width:100%;
+      overflow-x:hidden;
+    }
+
+    body{
+      margin:0;
+      font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(223,185,110,.08), transparent 70%),
+        radial-gradient(900px 500px at 90% 0%, rgba(223,185,110,.04), transparent 70%),
+        linear-gradient(180deg, #1b1715 0%, var(--bg) 50%, var(--bg2) 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px 12px 40px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 0 18px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:14px;
+    }
+
+    .titleArea{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .sheep-icon{
+      font-size:30px;
+      line-height:1;
+      filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));
+      flex:0 0 auto;
+    }
+
+    .title{
+      margin:0;
+      font-size:clamp(20px,4.6vw,30px);
+      font-weight:1000;
+      letter-spacing:.05em;
+      color:var(--gold);
+      line-height:1.15;
+    }
+
+    .sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      font-weight:1000;
+      transition:transform .12s ease, filter .18s ease;
+      font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .btn:hover{
+      filter:brightness(1.04);
+    }
+
+    .btn:active{
+      transform:scale(.97);
+    }
+
+    .btn.sound{
+      background:linear-gradient(180deg, rgba(223,185,110,.22), rgba(170,120,55,.18));
+      color:var(--gold);
+      border:1px solid rgba(223,185,110,.38);
+    }
+
+    .btn.reload{
+      background:rgba(255,248,240,.06);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:8px;
+      margin-bottom:14px;
+    }
+
+    .statCard{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background:linear-gradient(180deg, rgba(255,248,240,.04), rgba(255,248,240,.02));
+      box-shadow:var(--shadow);
+      min-height:72px;
+    }
+
+    .statLabel{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:6px;
+      line-height:1.2;
+    }
+
+    .statValue{
+      font-size:18px;
+      font-weight:1000;
+      color:var(--gold);
+      line-height:1.1;
+      white-space:nowrap;
+    }
+
+    .panels{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,248,240,.04), rgba(255,248,240,.02));
+      box-shadow:var(--shadow);
+    }
+
+    .panelTitle{
+      padding:14px 16px;
+      font-weight:1000;
+      color:var(--gold);
+      border-bottom:1px solid var(--line);
+      background:rgba(255,248,240,.04);
+      letter-spacing:.08em;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .panelTitleLeft{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      min-width:0;
+    }
+
+    .panelTitleText{
+      white-space:nowrap;
+      word-break:keep-all;
+      line-height:1;
+    }
+
+    .countBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:28px;
+      height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      border:1px solid rgba(223,185,110,.35);
+      background:rgba(223,185,110,.12);
+      color:var(--gold);
+      font-size:13px;
+      font-weight:1000;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .panelBody{
+      padding:14px;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .orderList{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .orderCard{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:
+        linear-gradient(180deg, rgba(255,248,240,.06), rgba(255,248,240,.03)),
+        linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+      position:relative;
+      overflow:hidden;
+      transition:transform .12s ease, box-shadow .18s ease;
+    }
+
+    .orderCard::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,.01) 0px,
+          rgba(255,255,255,.01) 1px,
+          transparent 1px,
+          transparent 5px
+        );
+      opacity:.10;
+    }
+
+    .orderCard:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+    }
+
+    .orderHead{
+      position:relative;
+      z-index:1;
+      margin-bottom:12px;
+    }
+
+    .orderMain{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      width:100%;
+      flex-wrap:nowrap;
+    }
+
+    .orderMainLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+      flex:1;
+      flex-wrap:wrap;
+    }
+
+    .tableNo{
+      font-size:22px;
+      font-weight:1000;
+      color:var(--gold);
+      line-height:1.1;
+      white-space:nowrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(223,185,110,.35);
+      background:rgba(223,185,110,.10);
+      color:var(--gold);
+      font-size:12px;
+      font-weight:1000;
+      white-space:nowrap;
+      line-height:1;
+      flex-shrink:0;
+    }
+
+    .doneBadge{
+      border-color:rgba(62,122,76,.35);
+      background:rgba(62,122,76,.14);
+      color:#c8f0d0;
+    }
+
+    .orderMetaInline{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      white-space:nowrap;
+      flex-shrink:0;
+      text-align:right;
+    }
+
+    .itemList{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .itemRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(255,248,240,.05);
+      padding:10px 12px;
+    }
+
+    .itemName{
+      font-weight:1000;
+      line-height:1.4;
+    }
+
+    .itemQty{
+      white-space:nowrap;
+      font-weight:1000;
+      color:var(--gold);
+    }
+
+    .orderFoot{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .cardActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .doneBtn,
+    .deleteBtn,
+    .clearAllBtn,
+    .toggleBtn{
+      border:none;
+      border-radius:12px;
+      font-weight:1000;
+      cursor:pointer;
+      transition:transform .12s ease, filter .18s ease;
+      font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+      white-space:nowrap;
+    }
+
+    .doneBtn:hover,
+    .deleteBtn:hover,
+    .clearAllBtn:hover,
+    .toggleBtn:hover{
+      filter:brightness(1.05);
+    }
+
+    .doneBtn:active,
+    .deleteBtn:active,
+    .clearAllBtn:active,
+    .toggleBtn:active{
+      transform:scale(.97);
+    }
+
+    .doneBtn{
+      background:linear-gradient(180deg, var(--ok), var(--ok2));
+      color:#fff;
+      padding:8px 12px;
+      font-size:12px;
+      min-width:72px;
+    }
+
+    .deleteBtn{
+      background:linear-gradient(180deg, var(--danger), var(--danger2));
+      color:#fff;
+      padding:8px 12px;
+      font-size:12px;
+      min-width:72px;
+    }
+
+    .clearAllBtn{
+      background:linear-gradient(180deg, var(--danger), var(--danger2));
+      color:#fff;
+      padding:8px 12px;
+      font-size:12px;
+    }
+
+    .toggleBtn{
+      background:rgba(255,248,240,.08);
+      color:var(--text);
+      border:1px solid var(--line);
+      padding:8px 12px;
+      font-size:12px;
+    }
+
+    .titleActions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .collapsible{
+      overflow:hidden;
+      transition:max-height .22s ease, opacity .18s ease, padding .18s ease;
+      max-height:3000px;
+      opacity:1;
+    }
+
+    .collapsible.collapsed{
+      max-height:0;
+      opacity:0;
+      padding-top:0;
+      padding-bottom:0;
+    }
+
+    .empty{
+      padding:22px 14px;
+      text-align:center;
+      color:var(--muted);
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:rgba(255,248,240,.03);
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      background:rgba(40,31,27,.96);
+      border:1px solid var(--line);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      font-weight:900;
+      display:none;
+      max-width:min(560px, 92vw);
+      z-index:9999;
+      text-al
